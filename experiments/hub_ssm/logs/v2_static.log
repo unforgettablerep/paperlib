@@ -1,0 +1,6 @@
+v2-static	Hub-v2 K=8	seed=0	mse=0.4492	48s
+v2-static	Hub-v2 K=8	seed=1	mse=0.4925	45s
+v2-static	Hub-v2 K=8	seed=2	mse=0.4312	46s
+v2-static	Hub-v2 K=16	seed=0	mse=0.4608	44s
+v2-static	Hub-v2 K=16	seed=1	mse=0.4772	46s
+v2-static	Hub-v2 K=16	seed=2	mse=0.4444	45s

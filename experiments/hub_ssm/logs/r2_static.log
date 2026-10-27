@@ -1,0 +1,15 @@
+static	CI (no mixing)	seed=0	mse=0.4251	17s
+static	CI (no mixing)	seed=1	mse=0.4407	15s
+static	CI (no mixing)	seed=2	mse=0.4089	15s
+static	MeanPool (homogeneous)	seed=0	mse=0.4127	40s
+static	MeanPool (homogeneous)	seed=1	mse=0.4167	49s
+static	MeanPool (homogeneous)	seed=2	mse=0.3739	49s
+static	Hub K=4	seed=0	mse=0.3910	33s
+static	Hub K=4	seed=1	mse=0.4157	36s
+static	Hub K=4	seed=2	mse=0.3945	33s
+static	Hub K=8	seed=0	mse=0.4053	37s
+static	Hub K=8	seed=1	mse=0.4174	38s
+static	Hub K=8	seed=2	mse=0.3407	37s
+static	Attention O(N^2)	seed=0	mse=0.3966	48s
+static	Attention O(N^2)	seed=1	mse=0.3360	47s
+static	Attention O(N^2)	seed=2	mse=0.3428	48s

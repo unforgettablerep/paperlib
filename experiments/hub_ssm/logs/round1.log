@@ -1,0 +1,9 @@
+CI (no mixing)                 test MSE 0.5388 ± nan   train  10.9s/run
+MeanPool+node (homogeneous)    test MSE 0.4139 ± nan   train  35.2s/run
+Hub K=1 (pooled field)         test MSE 0.5306 ± nan   train  20.9s/run
+Hub K=4, no time memory        test MSE 0.4219 ± nan   train  22.6s/run
+Hub K=4                        test MSE 0.4201 ± nan   train  22.5s/run
+Hub K=8                        test MSE 0.4222 ± nan   train  24.6s/run
+Hub K=8, no node emb           test MSE 0.5269 ± nan   train  25.0s/run
+Attention (O(N^2))             test MSE 0.5205 ± nan   train  30.8s/run
+Bi-scan S6 (S-Mamba-like)      test MSE 0.5245 ± nan   train 256.4s/run

@@ -1,0 +1,15 @@
+r3-dynamic	CI (no mixing)	seed=0	mse=0.5485	201s
+r3-dynamic	CI (no mixing)	seed=1	mse=0.5702	30s
+r3-dynamic	CI (no mixing)	seed=2	mse=0.5197	14s
+r3-dynamic	MeanPool (homogeneous)	seed=0	mse=0.5141	54s
+r3-dynamic	MeanPool (homogeneous)	seed=1	mse=0.5458	51s
+r3-dynamic	MeanPool (homogeneous)	seed=2	mse=0.5125	52s
+r3-dynamic	Hub K=4	seed=0	mse=0.5148	36s
+r3-dynamic	Hub K=4	seed=1	mse=0.5545	35s
+r3-dynamic	Hub K=4	seed=2	mse=0.5083	37s
+r3-dynamic	Hub K=8	seed=0	mse=0.5152	41s
+r3-dynamic	Hub K=8	seed=1	mse=0.5506	40s
+r3-dynamic	Hub K=8	seed=2	mse=0.5033	39s
+r3-dynamic	Attention O(N^2)	seed=0	mse=0.5197	53s
+r3-dynamic	Attention O(N^2)	seed=1	mse=0.5443	52s
+r3-dynamic	Attention O(N^2)	seed=2	mse=0.5016	52s

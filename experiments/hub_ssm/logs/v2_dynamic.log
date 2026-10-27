@@ -1,0 +1,6 @@
+v2-dynamic	Hub-v2 K=8	seed=0	mse=0.5126	47s
+v2-dynamic	Hub-v2 K=8	seed=1	mse=0.5558	46s
+v2-dynamic	Hub-v2 K=8	seed=2	mse=0.5015	46s
+v2-dynamic	Hub-v2 K=16	seed=0	mse=0.5118	44s
+v2-dynamic	Hub-v2 K=16	seed=1	mse=0.5461	47s
+v2-dynamic	Hub-v2 K=16	seed=2	mse=0.5059	45s

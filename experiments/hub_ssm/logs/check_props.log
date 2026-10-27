@@ -1,0 +1,14 @@
+[equivariance] max|f(Px) - P f(x)|
+  hub             2.38e-07
+  hub-v2          2.38e-07
+  sparse          0.00e+00
+  lowrank+sparse  4.77e-07
+  bi-scan         1.36e-02
+[causality] hub output change per patch after perturbing patch 4: 0.0e+00 0.0e+00 0.0e+00 0.0e+00 2.5e+00 6.4e-02
+[lag] hub: effect of var7@patch1 on var3 at patches 0..5: 0.0e+00 2.7e-03 1.2e-03 3.3e-04 2.8e-04 1.6e-04
+[coupling] hub numerical rank=8 (K=8), off-diagonal CV=0.19 (pooled mean field: rank 1, CV 0)
+[scaling] forward time in ms, batch=4, P=12, D=64, K=16, k=8 (CPU)
+  N=  256  hub-v2=    13.3  lowrank+sparse=    34.5  attention=    19.8
+  N= 1024  hub-v2=    52.7  lowrank+sparse=   148.6  attention=   251.7
+  N= 4096  hub-v2=   215.4  lowrank+sparse=  1298.7  attention=  5729.1
+  N= 8192  hub-v2=   486.8  lowrank+sparse=  2031.0  attention=     OOM
