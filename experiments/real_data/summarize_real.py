@@ -15,13 +15,21 @@ LINE = re.compile(r"(?P<data>\S+)\tT=(?P<T>\d+)\t(?P<model>\S+)\tseed=(?P<seed>\
 NAMES = {"none": "CI（无变量混合）", "attn": "注意力（iTransformer 式）", "bimamba": "双向 Mamba（S-Mamba 式）",
          "dyntopk": "动态 top-K（MS-FLOW 式）", "retrieve": "检索后注意（候选来自嵌入）",
          "attn+id": "注意力 + 身份嵌入", "bimamba+id": "双向 Mamba + 身份嵌入",
-         "retrieve+id": "检索后注意 + 身份嵌入", "bimamba-shuffled": "双向 Mamba（变量顺序打乱）"}
+         "retrieve+id": "检索后注意 + 身份嵌入", "bimamba-shuffled": "双向 Mamba（变量顺序打乱）",
+         "bimamba-vpt": "双向 Mamba + 随机顺序训练", "bimamba-vpt+tta4": "双向 Mamba + 随机顺序训练 + 4 顺序平均",
+         "bimamba+id-vpt": "双向 Mamba + 身份嵌入 + 随机顺序训练",
+         "bimamba+id-vpt+tta4": "双向 Mamba + 身份嵌入 + 随机顺序训练 + 4 顺序平均"}
 ORDER = list(NAMES)
 CHECKS = [  # (hypothesis, candidate, reference)
     ("H1 稀疏替代注意力", "dyntopk", "attn"), ("H1 稀疏替代注意力", "retrieve", "attn"),
     ("H1 稀疏替代双向 Mamba", "dyntopk", "bimamba"), ("H1 稀疏替代双向 Mamba", "retrieve", "bimamba"),
     ("H2 身份嵌入", "attn+id", "attn"), ("H2 身份嵌入", "bimamba+id", "bimamba"),
     ("H2 身份嵌入", "retrieve+id", "retrieve"),
+    ("H4 顺序鲁棒", "bimamba-vpt", "bimamba"), ("H4 顺序鲁棒", "bimamba-vpt+tta4", "bimamba"),
+    ("H4 顺序鲁棒", "bimamba-vpt+tta4", "bimamba-vpt"),
+    ("H4 顺序鲁棒", "bimamba+id-vpt+tta4", "bimamba+id"),
+    ("组合 vs 原版", "bimamba+id-vpt+tta4", "bimamba"), ("组合 vs 原版", "bimamba+id-vpt+tta4", "attn"),
+    ("组合 vs 原版", "bimamba+id", "attn"),
     ("参考：变量混合 vs CI", "attn", "none"), ("参考：变量混合 vs CI", "bimamba", "none"),
     ("参考：变量混合 vs CI", "retrieve", "none"),
 ]
