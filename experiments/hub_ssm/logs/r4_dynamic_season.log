@@ -1,1 +1,2 @@
 r4_dynamic_season	Sparse k=8	seed=0	mse=0.4496	305s	nb_same_cluster=0.85(chance 0.41)
+r4_dynamic_season	Sparse k=8	seed=1	mse=0.5417	301s	nb_same_cluster=0.71(chance 0.42)
