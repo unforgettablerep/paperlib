@@ -11,9 +11,11 @@ SETTING = {   # log file stem -> (setting, season)
     "v2_static": ("static", 0), "v2_dynamic": ("dynamic", 0),
     "r4_static_noseason": ("static", 0), "r4_dynamic_noseason": ("dynamic", 0),
     "r4_static_season": ("static", 1), "r4_dynamic_season": ("dynamic", 1),
+    "r4b_static_noseason": ("static", 0), "r4b_dynamic_noseason": ("dynamic", 0),
+    "r4b_static_season": ("static", 1), "r4b_dynamic_season": ("dynamic", 1),
 }
 ORDER = ["CI (no mixing)", "MeanPool (homogeneous)", "Hub K=4", "Hub K=8", "Hub-v2 K=8",
-         "Hub-v2 K=16", "Sparse k=8", "LR+Sparse K=8 k=8", "LR+Sparse K=8 k=16",
+         "Hub-v2 K=16", "Sparse k=8", "Sparse k=16", "LR+Sparse K=8 k=8", "LR+Sparse K=8 k=16",
          "Attention O(N^2)"]
 LINE = re.compile(r"[^\t]*\t(?P<name>[^\t]+)\tseed=(?P<seed>\d+)\tmse=(?P<mse>[\d.]+)\t\d+s"
                   r"(?:\tnb_same_cluster=(?P<nb>[\d.]+)\(chance (?P<nbc>[\d.]+)\))?"

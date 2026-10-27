@@ -27,6 +27,7 @@ MODELS = {   # key: (display name, mixer factory)
     "hubv2_8": ("Hub-v2 K=8", lambda: HubSSMMixer(D, 8, n_nodes=N, node_dim=8, select=True)),
     "hubv2_16": ("Hub-v2 K=16", lambda: HubSSMMixer(D, 16, n_nodes=N, node_dim=8, select=True)),
     "sparse8": ("Sparse k=8", lambda: SparseTopKMixer(D, N, node_dim=8, k=8)),
+    "sparse16": ("Sparse k=16", lambda: SparseTopKMixer(D, N, node_dim=8, k=16)),
     "lrs8_8": ("LR+Sparse K=8 k=8", lambda: LowRankSparseMixer(D, 8, N, node_dim=8, k=8)),
     "lrs8_16": ("LR+Sparse K=8 k=16", lambda: LowRankSparseMixer(D, 8, N, node_dim=8, k=16)),
     "attn": ("Attention O(N^2)", lambda: AttnMixer(D)),
