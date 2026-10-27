@@ -1,0 +1,3 @@
+r4b_static_noseason	Sparse k=16	seed=0	mse=0.3752	429s	nb_same_cluster=0.45(chance 0.24)	leader_in_nb=0.53(chance 0.25)
+r4b_static_noseason	Sparse k=16	seed=1	mse=0.3806	506s	nb_same_cluster=0.58(chance 0.24)	leader_in_nb=0.67(chance 0.25)
+r4b_static_noseason	Sparse k=16	seed=2	mse=0.3590	422s	nb_same_cluster=0.51(chance 0.24)	leader_in_nb=0.65(chance 0.25)

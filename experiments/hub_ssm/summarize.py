@@ -34,12 +34,21 @@ def load(logdir="logs"):
     return res
 
 
-def table(res, key):
+FIRST = ["CI (no mixing)", "MeanPool (homogeneous)", "Hub K=4", "Hub K=8", "Hub-v2 K=8",
+         "Hub-v2 K=16", "Attention O(N^2)"]
+SECOND = ["CI (no mixing)", "Hub-v2 K=8", "Sparse k=8", "Sparse k=16", "LR+Sparse K=8 k=8",
+          "LR+Sparse K=8 k=16", "Attention O(N^2)"]
+SETTINGS = [(("static", 0), "静态簇 + 时滞，无周期项"), (("dynamic", 0), "簇结构随时段切换，无周期项"),
+            (("static", 1), "静态簇 + 时滞，含周期项"), (("dynamic", 1), "簇结构随时段切换，含周期项")]
+
+
+def table(res, key, names=ORDER, diag=True):
     rows = res[key]
     ci = {s: float(r["mse"]) for s, r in rows["CI (no mixing)"].items()}
-    out = ["| 模型 | 测试 MSE（均值 ± 标准差） | 相对 CI（逐种子配对平均） | 近邻同簇比例 | 领头变量命中率 |",
-           "|---|---|---|---|---|"]
-    for name in ORDER:
+    head = "| 模型 | 测试 MSE（均值 ± 标准差） | 相对 CI（逐种子配对平均） |"
+    out = [head + (" 近邻同簇比例 | 领头变量命中率 |" if diag else ""),
+           "|---|---|---|" + ("---|---|" if diag else "")]
+    for name in names:
         if name not in rows or len(rows[name]) < 2:
             continue
         seeds = sorted(rows[name])
@@ -49,12 +58,18 @@ def table(res, key):
         ld = [rows[name][s]["ld"] for s in seeds if rows[name][s]["ld"]]
         nb_txt = (f"{st.mean(map(float, nb)):.2f}（随机 {rows[name][seeds[0]]['nbc']}）" if nb else "–")
         ld_txt = (f"{st.mean(map(float, ld)):.2f}（随机 {rows[name][seeds[0]]['ldc']}）" if ld else "–")
-        out.append(f"| {name} | {st.mean(v):.3f} ± {st.stdev(v):.3f} | {rel:+.1f}% | {nb_txt} | {ld_txt} |")
+        line = f"| {name} | {st.mean(v):.3f} ± {st.stdev(v):.3f} | {rel:+.1f}% |"
+        out.append(line + (f" {nb_txt} | {ld_txt} |" if diag else ""))
     return "\n".join(out)
+
+
+def section(res, names, diag, level="####"):
+    return "\n".join(f"{level} {title}\n\n{table(res, key, names, diag)}\n" for key, title in SETTINGS)
 
 
 if __name__ == "__main__":
     res = load()
-    for key, title in [(("static", 0), "静态簇 + 时滞，无周期项"), (("dynamic", 0), "簇结构随时段切换，无周期项"),
-                       (("static", 1), "静态簇 + 时滞，含周期项"), (("dynamic", 1), "簇结构随时段切换，含周期项")]:
-        print(f"### {title}\n\n{table(res, key)}\n")
+    print("## 第一次实验（Hub-SSM）\n")
+    print(section(res, FIRST, diag=False))
+    print("## 第二次实验（低秩 + 稀疏）\n")
+    print(section(res, SECOND, diag=True))
