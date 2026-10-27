@@ -24,7 +24,11 @@ VARIANTS = {   # key: (vc layer, identity embedding, scan order)
     "dyntopk": ("dyntopk", False, None),
     "retrieve": ("retrieve", False, None),
     "retrieve+id": ("retrieve", True, None),
+    "bimamba-vpt": ("bimamba", False, None),
+    "bimamba+id-vpt": ("bimamba", True, None),
 }
+VPT = {"bimamba-vpt", "bimamba+id-vpt"}   # random scan order per training step; tested with
+TTA_ORDERS = 4                             # the original order and averaged over 4 random orders
 
 
 @torch.no_grad()
@@ -50,7 +54,7 @@ def run(data, data_dir, key, seed, T=96, L=96, d=64, layers=2, k=16, lr=5e-4, bs
     if order == "shuffle":
         order = torch.randperm(n_vars, generator=torch.Generator().manual_seed(1000 + seed))
     model = VariateForecaster(n_vars, L, T, vc=vc, d=d, layers=layers, d_ff=2 * d, k=k,
-                              id_emb=id_emb, order=order)
+                              id_emb=id_emb, order=order, vpt=key in VPT)
     steps_per_epoch = train.n // bs if max_steps is None else min(train.n // bs, max_steps)
     opt = torch.optim.Adam(model.parameters(), lr=lr)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, epochs * steps_per_epoch)
@@ -75,7 +79,13 @@ def run(data, data_dir, key, seed, T=96, L=96, d=64, layers=2, k=16, lr=5e-4, bs
                 break
     model.load_state_dict(best_state)
     mse, mae = evaluate(model, test)
-    return best, mse, mae, ep_done, time.time() - t0
+    sec = time.time() - t0
+    tta = None
+    if key in VPT:                          # same trained model, test-time order averaging
+        for layer in model.layers:
+            layer.vc.tta = TTA_ORDERS
+        tta = evaluate(model, test)
+    return best, mse, mae, ep_done, sec, tta
 
 
 if __name__ == "__main__":
@@ -93,7 +103,10 @@ if __name__ == "__main__":
     torch.set_num_threads(a.threads)
     for key in a.models.split(","):
         for s in a.seeds:
-            v, mse, mae, ep, sec = run(a.data, a.data_dir, key, s, T=a.horizon, k=a.k,
-                                       epochs=a.epochs, max_steps=a.max_steps)
+            v, mse, mae, ep, sec, tta = run(a.data, a.data_dir, key, s, T=a.horizon, k=a.k,
+                                            epochs=a.epochs, max_steps=a.max_steps)
             print(f"{a.data}\tT={a.horizon}\t{key}\tseed={s}\tval={v:.4f}\tmse={mse:.4f}"
                   f"\tmae={mae:.4f}\tepochs={ep}\t{sec:.0f}s", flush=True)
+            if tta is not None:
+                print(f"{a.data}\tT={a.horizon}\t{key}+tta{TTA_ORDERS}\tseed={s}\tval={v:.4f}"
+                      f"\tmse={tta[0]:.4f}\tmae={tta[1]:.4f}\tepochs={ep}\t{sec:.0f}s", flush=True)

@@ -84,14 +84,30 @@ class Mamba(nn.Module):
 
 
 class BiMambaVC(nn.Module):
-    """S-Mamba: a forward and a reversed Mamba block over the variable sequence, summed."""
+    """S-Mamba: a forward and a reversed Mamba block over the variable sequence, summed.
 
-    def __init__(self, d, d_state=2, order=None):
+    vpt=True: scan the variables in a fresh random order at every training step.
+    tta=M>1 (set at evaluation): average the layer output over M fixed random orders,
+    a finite-sample estimate of the order-averaged (permutation-equivariant) mixer."""
+
+    def __init__(self, d, d_state=2, order=None, vpt=False):
         super().__init__()
         self.fwd, self.bwd = Mamba(d, d_state), Mamba(d, d_state)
         self.register_buffer("order", order if order is not None else torch.empty(0, dtype=torch.long))
+        self.vpt, self.tta = vpt, 0
+
+    def scan_in(self, x, perm):
+        inv = torch.argsort(perm)
+        x = x[:, perm]
+        return (self.fwd(x) + self.bwd(x.flip(1)).flip(1))[:, inv]
 
     def forward(self, x):
+        if self.training and self.vpt:
+            return self.scan_in(x, torch.randperm(x.shape[1], device=x.device))
+        if not self.training and self.tta > 1:
+            g = torch.Generator().manual_seed(12345)
+            return torch.stack([self.scan_in(x, torch.randperm(x.shape[1], generator=g))
+                                for _ in range(self.tta)]).mean(0)
         if len(self.order):                        # scan the variables in a given order
             inv = torch.argsort(self.order)
             x = x[:, self.order]
@@ -164,13 +180,13 @@ class Layer(nn.Module):
         return self.n2(x + self.drop(self.ffn(x)))
 
 
-def make_vc(kind, d, n_vars, k, order=None):
+def make_vc(kind, d, n_vars, k, order=None, vpt=False):
     if kind == "none":
         return NoVC()
     if kind == "attn":
         return AttnVC(d)
     if kind == "bimamba":
-        return BiMambaVC(d, order=order)
+        return BiMambaVC(d, order=order, vpt=vpt)
     if kind == "dyntopk":
         return DynTopKVC(d, k)
     if kind == "retrieve":
@@ -180,11 +196,11 @@ def make_vc(kind, d, n_vars, k, order=None):
 
 class VariateForecaster(nn.Module):
     def __init__(self, n_vars, L, T, vc="attn", d=128, layers=2, d_ff=256, k=16,
-                 id_emb=False, order=None, dropout=0.1):
+                 id_emb=False, order=None, dropout=0.1, vpt=False):
         super().__init__()
         self.tok = nn.Linear(L, d)
         self.id = nn.Parameter(torch.zeros(n_vars, d)) if id_emb else None
-        self.layers = nn.ModuleList(Layer(d, make_vc(vc, d, n_vars, k, order), d_ff, dropout)
+        self.layers = nn.ModuleList(Layer(d, make_vc(vc, d, n_vars, k, order, vpt), d_ff, dropout)
                                     for _ in range(layers))
         self.proj = nn.Linear(d, T)
 
