@@ -1,0 +1,51 @@
+{
+  "dataset": "Traffic",
+  "L": 96,
+  "H": 96,
+  "diagnostics": {
+    "C": 862,
+    "pc1_share": 0.5914415186788943,
+    "pc3_share": 0.7501580860705725,
+    "raw_coupling_topk": 0.8738955724454501,
+    "resid_coupling_topk": 0.505492992448636,
+    "linear_probe": {
+      "ci": {
+        "val_mse": 0.763916627810479,
+        "gain_vs_ci_%": 0.0
+      },
+      "graph": {
+        "val_mse": 1.1443955987114074,
+        "gain_vs_ci_%": -49.806347584218564
+      },
+      "factor": {
+        "val_mse": 3.954760375386143,
+        "gain_vs_ci_%": -417.69528655518207
+      },
+      "factor+resid_graph": {
+        "val_mse": 4.013692734131097,
+        "gain_vs_ci_%": -425.40978792869777
+      }
+    }
+  },
+  "models": {
+    "ci": {
+      "val_mse": 0.7514323889801409,
+      "test_mse": 1.2171626054928266,
+      "test_mae": 0.6970482738638607,
+      "epochs_run": 8,
+      "seconds": 36.549654960632324,
+      "params": 46112
+    }
+  },
+  "config": {
+    "seed": 0,
+    "lr": 0.001,
+    "tag": "",
+    "train_stride": 24,
+    "eval_stride": 8,
+    "D": 64,
+    "layers": 2,
+    "k": 10,
+    "r_factor_tokens": 4
+  }
+}
