@@ -23,7 +23,8 @@ L, H = 96, 96
 torch.set_num_threads(int(os.environ.get("OMP_NUM_THREADS", "2")))
 SEED = int(os.environ.get("PILOT_SEED", "0"))  # robustness re-runs; defaults reproduce the main runs
 LR = float(os.environ.get("PILOT_LR", "1e-3"))
-SUFFIX = "" if (SEED == 0 and LR == 1e-3) else f"_seed{SEED}_lr{LR:g}"
+TAG = os.environ.get("PILOT_TAG", "")  # e.g. a denser-training-data re-run
+SUFFIX = ("" if (SEED == 0 and LR == 1e-3) else f"_seed{SEED}_lr{LR:g}") + (f"_{TAG}" if TAG else "")
 
 
 def factor_basis(Xtr, r):
@@ -107,7 +108,7 @@ def main():
     te = ds.starts("test", L, H, s_ev)
     m_raw, m_res = topk_mask(R_raw, k), topk_mask(R_res, k)
     res = {"dataset": name, "L": L, "H": H, "diagnostics": diag, "models": {},
-           "config": {"seed": SEED, "lr": LR, "train_stride": s_tr, "eval_stride": s_ev, "D": 64, "layers": 2, "k": k, "r_factor_tokens": min(4, C)}}
+           "config": {"seed": SEED, "lr": LR, "tag": TAG, "train_stride": s_tr, "eval_stride": s_ev, "D": 64, "layers": 2, "k": k, "r_factor_tokens": min(4, C)}}
     prev = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results", f"pilot2_real_{name}{SUFFIX}.json")
     if os.path.exists(prev):  # resume: keep variants that already finished
         import json
