@@ -1,0 +1,50 @@
+{
+  "dataset": "Solar",
+  "L": 96,
+  "H": 96,
+  "diagnostics": {
+    "C": 137,
+    "pc1_share": 0.9147787058817731,
+    "pc3_share": 0.9423770371535101,
+    "raw_coupling_topk": 0.9643396661338467,
+    "resid_coupling_topk": 0.3639465697581454,
+    "linear_probe": {
+      "ci": {
+        "val_mse": 0.321839531019828,
+        "gain_vs_ci_%": 0.0
+      },
+      "graph": {
+        "val_mse": 0.2913159256054447,
+        "gain_vs_ci_%": 9.484106976436886
+      },
+      "factor": {
+        "val_mse": 0.3333065687225475,
+        "gain_vs_ci_%": -3.5629674410670957
+      },
+      "factor+resid_graph": {
+        "val_mse": 0.3314309941634543,
+        "gain_vs_ci_%": -2.9802004474818187
+      }
+    }
+  },
+  "models": {
+    "ci": {
+      "val_mse": 0.22142082323533538,
+      "test_mse": 0.28016788322992114,
+      "test_mae": 0.30127129254769863,
+      "epochs_run": 6,
+      "seconds": 38.50057244300842,
+      "params": 46112
+    }
+  },
+  "config": {
+    "seed": 0,
+    "lr": 0.001,
+    "train_stride": 8,
+    "eval_stride": 4,
+    "D": 64,
+    "layers": 2,
+    "k": 10,
+    "r_factor_tokens": 4
+  }
+}
