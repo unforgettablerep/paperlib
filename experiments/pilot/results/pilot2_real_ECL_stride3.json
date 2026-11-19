@@ -1,0 +1,51 @@
+{
+  "dataset": "ECL",
+  "L": 96,
+  "H": 96,
+  "diagnostics": {
+    "C": 321,
+    "pc1_share": 0.5520160593757482,
+    "pc3_share": 0.7268855091309923,
+    "raw_coupling_topk": 0.8320675949747253,
+    "resid_coupling_topk": 0.4303394231116024,
+    "linear_probe": {
+      "ci": {
+        "val_mse": 0.1760420044726136,
+        "gain_vs_ci_%": 0.0
+      },
+      "graph": {
+        "val_mse": 0.17024368559962383,
+        "gain_vs_ci_%": 3.2937132761924386
+      },
+      "factor": {
+        "val_mse": 0.17533949024771298,
+        "gain_vs_ci_%": 0.3990605690983834
+      },
+      "factor+resid_graph": {
+        "val_mse": 0.17273081575048566,
+        "gain_vs_ci_%": 1.88090832755943
+      }
+    }
+  },
+  "models": {
+    "ci": {
+      "val_mse": 0.17638186558086555,
+      "test_mse": 0.19756152422780207,
+      "test_mae": 0.28052305635532715,
+      "epochs_run": 8,
+      "seconds": 102.10939955711365,
+      "params": 46112
+    }
+  },
+  "config": {
+    "seed": 0,
+    "lr": 0.001,
+    "tag": "stride3",
+    "train_stride": 3,
+    "eval_stride": 6,
+    "D": 64,
+    "layers": 2,
+    "k": 10,
+    "r_factor_tokens": 4
+  }
+}
