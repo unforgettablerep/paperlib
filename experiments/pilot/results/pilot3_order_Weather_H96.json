@@ -55,6 +55,16 @@
       "params": 177952,
       "order": "anti",
       "la_cost": 0.4208550095825549
+    },
+    "bi16_original_seed1": {
+      "val_mse": 0.47754747035069905,
+      "test_mse": 0.22643264319960138,
+      "test_mae": 0.2666776129436359,
+      "epochs_run": 4,
+      "seconds": 80.21412134170532,
+      "params": 177952,
+      "order": "original",
+      "la_cost": 0.32144818899088706
     }
   }
 }
