@@ -118,7 +118,7 @@ def main():
             print("skip", v, flush=True)
             continue
         torch.manual_seed(SEED)
-        mask = m_raw if v == "sparse" else m_res if v == "factor_sparse" else None
+        mask = m_raw if v == "sparse" else m_res if v in ("factor_sparse", "static_lrs") else None
         model = Forecaster(L, H, C, 64, mix=v, layers=2, mask=mask, r=min(4, C))
         out = train_eval(model, ds.X, tr, va, te, L, H, epochs=8, patience=2, lr=LR, bs=32, seed=SEED,
                          log=lambda s: print(s, flush=True))

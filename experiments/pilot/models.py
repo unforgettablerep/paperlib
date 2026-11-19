@@ -37,6 +37,30 @@ class MixDense(nn.Module):
         return torch.einsum("ij,bjd->bid", self.W, self.v(h))
 
 
+class MixStaticLRS(nn.Module):
+    """Static (input-independent) structured mixing: W = U V^T (rank r) + S restricted to a fixed sparse mask.
+    Parameters O(C r + nnz) instead of O(C^2)."""
+
+    def __init__(self, C, D, mask_blocked, r=8):
+        super().__init__()
+        self.U = nn.Parameter(torch.zeros(C, r))
+        self.V = nn.Parameter(torch.randn(C, r) / math.sqrt(C))
+        allow = ~mask_blocked.clone()
+        allow.fill_diagonal_(False)
+        idx = allow.nonzero(as_tuple=False)
+        self.register_buffer("rows", idx[:, 0], persistent=False)
+        self.register_buffer("cols", idx[:, 1], persistent=False)
+        self.s = nn.Parameter(torch.zeros(idx.shape[0]))
+        self.C = C
+        self.v = nn.Linear(D, D)
+
+    def forward(self, h):
+        v = self.v(h)
+        S = torch.zeros(self.C, self.C, device=h.device).index_put((self.rows, self.cols), self.s)
+        W = self.U @ self.V.T + S
+        return torch.einsum("ij,bjd->bid", W, v)
+
+
 class MixFactor(nn.Module):
     """r learned queries pool the channels into r factor tokens; channels read them back."""
 
@@ -177,6 +201,8 @@ class Forecaster(nn.Module):
                 m = MixAttn(D, mask=mask)
             elif mix == "factor_sparse":
                 m = MixFactorSparse(D, mask, r)
+            elif mix == "static_lrs":
+                m = MixStaticLRS(C, D, mask, r=8)
             elif mix == "mamba":
                 m = MixMamba(D, order if order is not None else np.arange(C), N, bidirectional)
             else:
