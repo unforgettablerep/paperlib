@@ -63,11 +63,21 @@
       "seconds": 156.90501070022583,
       "params": 146464,
       "gain_vs_ci_%": 31.714529633352036
+    },
+    "static_lrs": {
+      "val_mse": 0.4351742709623186,
+      "test_mse": 0.44231504390509446,
+      "test_mae": 0.4987618701330668,
+      "epochs_run": 8,
+      "seconds": 49.083483934402466,
+      "params": 70396,
+      "gain_vs_ci_%": 48.49400643378819
     }
   },
   "config": {
     "seed": 0,
     "lr": 0.001,
+    "tag": "",
     "train_stride": 8,
     "eval_stride": 4,
     "D": 64,
@@ -75,5 +85,5 @@
     "k": 10,
     "r_factor_tokens": 4
   },
-  "seconds": 363.95251727104187
+  "seconds": 60.103520154953
 }
