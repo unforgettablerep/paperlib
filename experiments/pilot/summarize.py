@@ -73,7 +73,9 @@ def main():
             out.append("| gain vs CI % | " + " | ".join(
                 f"{np.mean([r['forecast_gain_vs_CI_%'][k] for r in runs]):+.1f}" for k in fc) + " |")
             out.append("")
-    p2 = load("pilot2_real_*.json")
+    p2_all = load("pilot2_real_*.json")
+    p2 = [r for r in p2_all if r.get("config", {}).get("seed", 0) == 0 and r.get("config", {}).get("lr", 1e-3) == 1e-3]
+    p2_rob = [r for r in p2_all if r not in p2]
     if p2:
         variants = ["ci", "attn", "dense", "factor", "sparse", "factor_sparse"]
         out += ["## Pilot 2B/2C — real data: diagnostics and channel-mixing variants", "",
@@ -117,6 +119,16 @@ def main():
                 if cdv:
                     wins[min(cdv, key=cdv.get)] += 1
             out += ["", "Best CD variant count: " + ", ".join(f"{k} {v}" for k, v in wins.items()), ""]
+
+    if p2_rob:
+        out += ["### Pilot 2 robustness re-runs (other seed / lower learning rate)", "",
+                "| dataset | seed | lr | " + " | ".join(["ci", "attn", "dense", "factor", "sparse", "factor_sparse"]) + " |",
+                "|---|---|---|" + "---|" * 6]
+        for r in p2_rob:
+            m = r["models"]
+            out.append(f"| {r['dataset']} | {r['config']['seed']} | {r['config']['lr']:g} | " + " | ".join(
+                f"{m[v]['test_mse']:.4f}" if v in m else "—" for v in ["ci", "attn", "dense", "factor", "sparse", "factor_sparse"]) + " |")
+        out.append("")
 
     # ---- pilot 3
     p3 = load("pilot3_order_*.json")

@@ -21,6 +21,9 @@ from models import Forecaster, topk_mask, train_eval
 
 L, H = 96, 96
 torch.set_num_threads(int(os.environ.get("OMP_NUM_THREADS", "2")))
+SEED = int(os.environ.get("PILOT_SEED", "0"))  # robustness re-runs; defaults reproduce the main runs
+LR = float(os.environ.get("PILOT_LR", "1e-3"))
+SUFFIX = "" if (SEED == 0 and LR == 1e-3) else f"_seed{SEED}_lr{LR:g}"
 
 
 def factor_basis(Xtr, r):
@@ -104,23 +107,23 @@ def main():
     te = ds.starts("test", L, H, s_ev)
     m_raw, m_res = topk_mask(R_raw, k), topk_mask(R_res, k)
     res = {"dataset": name, "L": L, "H": H, "diagnostics": diag, "models": {},
-           "config": {"train_stride": s_tr, "eval_stride": s_ev, "D": 64, "layers": 2, "k": k, "r_factor_tokens": min(4, C)}}
+           "config": {"seed": SEED, "lr": LR, "train_stride": s_tr, "eval_stride": s_ev, "D": 64, "layers": 2, "k": k, "r_factor_tokens": min(4, C)}}
     for v in variants:
-        torch.manual_seed(0)
+        torch.manual_seed(SEED)
         mask = m_raw if v == "sparse" else m_res if v == "factor_sparse" else None
         model = Forecaster(L, H, C, 64, mix=v, layers=2, mask=mask, r=min(4, C))
-        out = train_eval(model, ds.X, tr, va, te, L, H, epochs=8, patience=2, lr=1e-3, bs=32, seed=0,
+        out = train_eval(model, ds.X, tr, va, te, L, H, epochs=8, patience=2, lr=LR, bs=32, seed=SEED,
                          log=lambda s: print(s, flush=True))
         res["models"][v] = out
         print(f"[{name}] {v:14s} test_mse={out['test_mse']:.4f} test_mae={out['test_mae']:.4f} "
               f"ep={out['epochs_run']} {out['seconds']:.0f}s params={out['params']}", flush=True)
-        save_json(res, f"pilot2_real_{name}.json")
+        save_json(res, f"pilot2_real_{name}{SUFFIX}.json")
     base = res["models"].get("ci", {}).get("test_mse")
     if base:
         for v in res["models"]:
             res["models"][v]["gain_vs_ci_%"] = 100 * (base - res["models"][v]["test_mse"]) / base
     res["seconds"] = time.time() - t0
-    save_json(res, f"pilot2_real_{name}.json")
+    save_json(res, f"pilot2_real_{name}{SUFFIX}.json")
 
 
 if __name__ == "__main__":
