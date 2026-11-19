@@ -32,6 +32,15 @@ Test MSE; gain vs `shared` [x, Ax] in brackets. `own_phase` = only own-history w
 | Traffic | 0.5874 (-2.8%) | 0.5716 (+0.0%) | 0.4699 (+17.8%) | 0.4651 (+18.6%) | 0.4430 (+22.5%) | +5.7% |
 | Weather | 0.1774 (-4.1%) | 0.1704 (+0.0%) | 0.1638 (+3.9%) | 0.1702 (+0.1%) | 0.1623 (+4.7%) | +0.9% |
 
+### Pilot 1c — neural check: phase-conditioned channel mixing
+
+Test MSE. `+emb` = phase-group embedding added to every channel token; `phasedense` = static CxC mixing plus a rank-8 phase-specific term. Last column = gain of phasedense+emb over the fair control dense+emb.
+
+| dataset | H | ci+emb | dense | dense+emb | phasedense+emb | phase mixing vs control |
+|---|---|---|---|---|---|---|
+| PEMS04 | 48 | 0.2927 | 0.1779 | 0.1729 | 0.1616 | +6.5% |
+| PEMS08 | 48 | 0.2639 | 0.2336 | 0.2076 | 0.1904 | +8.3% |
+
 ## Pilot 2A — synthetic factor + sparse-graph data (ground truth known)
 
 Structure recovery AUROC against the true (undirected) parent graph, and forecasting gain vs CI (%), mean over 3 seeds per setting.
@@ -60,19 +69,59 @@ Same backbone (2 layers, D=64), same budget; only the channel-mixing block diffe
 | ETTm1 | 7 | 0.42 | -0.6% | +2.1% | 0.3227 (+0.0%) | 0.3354 (-3.9%) | 0.3202 (+0.8%) | 0.3291 (-2.0%) | 0.3354 (-3.9%) | 0.3384 (-4.9%) |
 | ETTm2 | 7 | 0.44 | -0.3% | +0.1% | 0.1785 (+0.0%) | 0.1867 (-4.6%) | 0.1790 (-0.3%) | 0.1813 (-1.6%) | 0.1867 (-4.6%) | 0.1849 (-3.6%) |
 | Exchange | 8 | 0.56 | +0.1% | +0.8% | 0.0913 (+0.0%) | 0.0917 (-0.5%) | 0.0944 (-3.5%) | 0.0954 (-4.5%) | 0.0917 (-0.5%) | 0.0963 (-5.6%) |
-| PEMS08 | 170 | 0.80 | +6.5% | +38.5% | 0.7967 (+0.0%) | 0.5721 (+28.2%) | 0.4203 (+47.3%) | — | — | — |
+| PEMS04 | 307 | 0.78 | +13.4% | +43.1% | 0.8588 (+0.0%) | 0.5723 (+33.4%) | 0.3752 (+56.3%) | — | — | 0.5864 (+31.7%) |
+| PEMS08 | 170 | 0.80 | +6.5% | +38.5% | 0.7967 (+0.0%) | 0.5721 (+28.2%) | 0.4203 (+47.3%) | 0.5737 (+28.0%) | 0.5802 (+27.2%) | 0.5677 (+28.7%) |
+| Solar | 137 | 0.91 | +9.5% | -3.6% | 0.2802 (+0.0%) | 0.2650 (+5.4%) | 0.2609 (+6.9%) | — | — | 0.2595 (+7.4%) |
 | Weather | 21 | 0.43 | +1.5% | -0.6% | 0.2377 (+0.0%) | 0.2311 (+2.8%) | 0.2062 (+13.2%) | 0.2349 (+1.2%) | 0.2289 (+3.7%) | 0.2257 (+5.0%) |
 
-Spearman correlation across 8 datasets between a diagnostic (train/val only) and the best neural CD gain on test:
+Spearman correlation across 10 datasets between a diagnostic (train/val only) and the best neural CD gain on test:
 
-- PC1 share: ρ = +0.05
-- raw coupling: ρ = +0.21
-- residual coupling: ρ = +0.05
-- linear probe +graph gain: ρ = +0.62
-- linear probe +factor gain: ρ = +0.31
-- C (number of variables): ρ = +0.52
+- PC1 share: ρ = +0.38
+- raw coupling: ρ = +0.52
+- residual coupling: ρ = -0.31
+- linear probe +graph gain: ρ = +0.77
+- linear probe +factor gain: ρ = +0.39
+- C (number of variables): ρ = +0.75
 
-Best CD variant count: attn 0, dense 5, factor 2, sparse 1, factor_sparse 0
+Best CD variant count: attn 0, dense 6, factor 2, sparse 1, factor_sparse 1
+
+### Pilot 2 robustness re-runs (other seed / lower learning rate)
+
+| dataset | seed | lr | ci | attn | dense | factor | sparse | factor_sparse |
+|---|---|---|---|---|---|---|---|---|
+| PEMS08 | 0 | 0.0003 | — | 0.6731 | — | — | — | — |
+| PEMS08 | 1 | 0.001 | 0.8053 | 0.5615 | 0.4277 | — | — | — |
+| Weather | 0 | 0.0003 | — | 0.2399 | 0.2092 | — | — | — |
+| Weather | 1 | 0.001 | 0.2394 | 0.2317 | 0.2066 | — | — | 0.2246 |
+
+## Pilot 3 — Mamba channel-scan order
+
+Same model and seed, only the order differs (`seedN` rows = original order with another seed, i.e. the noise floor). LA = normalised linear-arrangement cost of the order on the top-k |corr| graph.
+
+**PEMS08** (C=170, H=48)
+
+| run | order | LA cost | test MSE |
+|---|---|---|---|
+| bi16_anti | anti | 0.463 | 0.3877 |
+| bi16_original | original | 0.306 | 0.3899 |
+| bi16_spectral_dist | spectral_dist | 0.308 | 0.3920 |
+| bi16_original_seed1 | original | 0.306 | 0.3966 |
+
+bi16 orders: MSE range 0.3877–0.3920 (spread 1.1%), Spearman(LA, MSE) = -0.50; seed spread (original order) 1.7%
+
+**Weather** (C=21, H=96)
+
+| run | order | LA cost | test MSE |
+|---|---|---|---|
+| bi16_original_seed1 | original | 0.321 | 0.2264 |
+| bi16_original | original | 0.321 | 0.2273 |
+| bi16_spectral | spectral | 0.218 | 0.2298 |
+| uni16_spectral | spectral | 0.218 | 0.2334 |
+| bi16_anti | anti | 0.421 | 0.2339 |
+| bi16_random0 | random0 | 0.364 | 0.2343 |
+| uni16_anti | anti | 0.421 | 0.2395 |
+
+bi16 orders: MSE range 0.2273–0.2343 (spread 3.1%), Spearman(LA, MSE) = +0.60; seed spread (original order) 0.4%
 
 ## Pilot 4 — adaptive test-time compute in coarse-to-fine forecasting
 
@@ -93,6 +142,8 @@ Gain vs Chronos-2 univariate zero-shot (%), test windows only.
 | dataset | C | uni MSE | uni_zero_shot | multi_zero_shot | uni+ci_adapter | uni+graph_adapter | multi+ci_adapter | multi+graph_adapter |
 |---|---|---|---|---|---|---|---|---|
 | ETTh1 | 7 | 0.3907 | +0.0 | +9.3 | +1.8 | -2.6 | +5.2 | +0.8 |
+| PEMS08 | 170 | 0.2451 | +0.0 | +12.0 | -3.4 | -0.3 | +3.2 | +3.2 |
+| Weather | 21 | 0.1156 | +0.0 | +14.6 | -4.3 | -5.4 | +10.7 | +3.8 |
 
 ## Pilot 6 — LLM-written semantic prior graph
 

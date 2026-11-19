@@ -54,6 +54,22 @@ def main():
                        + f" | {extra:+.1f}% |")
         out.append("")
 
+    p1c = load("pilot1c_*.json")
+    if p1c:
+        names = ["ci+emb", "dense", "dense+emb", "phasedense+emb"]
+        out += ["### Pilot 1c — neural check: phase-conditioned channel mixing", "",
+                "Test MSE. `+emb` = phase-group embedding added to every channel token; `phasedense` = static CxC "
+                "mixing plus a rank-8 phase-specific term. Last column = gain of phasedense+emb over the fair control "
+                "dense+emb.", "",
+                "| dataset | H | " + " | ".join(names) + " | phase mixing vs control |", "|---|---|" + "---|" * (len(names) + 1)]
+        for r in p1c:
+            m = r["runs"]
+            if all(n in m for n in names):
+                g = 100 * (m["dense+emb"]["test_mse"] - m["phasedense+emb"]["test_mse"]) / m["dense+emb"]["test_mse"]
+                out.append(f"| {r['dataset']} | {r['H']} | " + " | ".join(f"{m[n]['test_mse']:.4f}" for n in names) +
+                           f" | {g:+.1f}% |")
+        out.append("")
+
     # ---- pilot 2
     syn = load("pilot2_synthetic.json")
     if syn:
