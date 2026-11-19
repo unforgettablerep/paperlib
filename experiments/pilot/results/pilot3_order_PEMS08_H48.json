@@ -66,6 +66,16 @@
       "params": 59120,
       "order": "spectral_dist",
       "la_cost": 0.30751342297455997
+    },
+    "uni16_anti": {
+      "val_mse": 0.439333755420571,
+      "test_mse": 0.40309420190820366,
+      "test_mae": 0.4468731568961296,
+      "epochs_run": 4,
+      "seconds": 88.75401067733765,
+      "params": 59120,
+      "order": "anti",
+      "la_cost": 0.46281513543256125
     }
   }
 }
