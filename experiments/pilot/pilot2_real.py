@@ -108,7 +108,14 @@ def main():
     m_raw, m_res = topk_mask(R_raw, k), topk_mask(R_res, k)
     res = {"dataset": name, "L": L, "H": H, "diagnostics": diag, "models": {},
            "config": {"seed": SEED, "lr": LR, "train_stride": s_tr, "eval_stride": s_ev, "D": 64, "layers": 2, "k": k, "r_factor_tokens": min(4, C)}}
+    prev = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results", f"pilot2_real_{name}{SUFFIX}.json")
+    if os.path.exists(prev):  # resume: keep variants that already finished
+        import json
+        res["models"] = json.load(open(prev)).get("models", {})
     for v in variants:
+        if v in res["models"]:
+            print("skip", v, flush=True)
+            continue
         torch.manual_seed(SEED)
         mask = m_raw if v == "sparse" else m_res if v == "factor_sparse" else None
         model = Forecaster(L, H, C, 64, mix=v, layers=2, mask=mask, r=min(4, C))
