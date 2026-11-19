@@ -1,0 +1,51 @@
+{
+  "dataset": "Weather",
+  "ctx": 512,
+  "H": 48,
+  "C": 21,
+  "n_train_windows": 40,
+  "n_test_windows": 40,
+  "seconds_uni": 149.64219760894775,
+  "seconds_multi": 127.92056083679199,
+  "zero_shot": {
+    "uni": {
+      "mse": 0.11560691893100739,
+      "mae": 0.17292658984661102
+    },
+    "multi": {
+      "mse": 0.09874662756919861,
+      "mae": 0.15618981420993805
+    }
+  },
+  "adapters": {
+    "uni+ci_adapter": {
+      "mse": 0.1205759937771143,
+      "mae": 0.18896603543060692,
+      "lambda": 10.0
+    },
+    "uni+graph_adapter": {
+      "mse": 0.12181948832564192,
+      "mae": 0.19271228442933383,
+      "lambda": 10.0
+    },
+    "multi+ci_adapter": {
+      "mse": 0.10327284066117258,
+      "mae": 0.16895062361666302,
+      "lambda": 10.0
+    },
+    "multi+graph_adapter": {
+      "mse": 0.11125697735589146,
+      "mae": 0.1764446420268349,
+      "lambda": 10.0
+    }
+  },
+  "gain_vs_uni_zero_shot_%": {
+    "uni_zero_shot": 0.0,
+    "multi_zero_shot": 14.584154233771049,
+    "uni+ci_adapter": -4.298250391979035,
+    "uni+graph_adapter": -5.373873339139944,
+    "multi+ci_adapter": 10.668979317055939,
+    "multi+graph_adapter": 3.7627000315715606
+  },
+  "seconds": 277.7661898136139
+}
