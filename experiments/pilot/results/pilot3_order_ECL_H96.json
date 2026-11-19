@@ -25,6 +25,16 @@
       "params": 95200,
       "order": "original",
       "la_cost": 0.15024384523217138
+    },
+    "bi16_spectral": {
+      "val_mse": 0.24839284014124002,
+      "test_mse": 0.2737378033529032,
+      "test_mae": 0.3680002738716408,
+      "epochs_run": 3,
+      "seconds": 194.48973107337952,
+      "params": 95200,
+      "order": "spectral",
+      "la_cost": 0.12059023105150678
     }
   }
 }
