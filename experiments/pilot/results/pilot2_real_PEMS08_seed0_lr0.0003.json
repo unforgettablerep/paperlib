@@ -1,0 +1,51 @@
+{
+  "dataset": "PEMS08",
+  "L": 96,
+  "H": 96,
+  "diagnostics": {
+    "C": 170,
+    "pc1_share": 0.8017653747379203,
+    "pc3_share": 0.8708363538922145,
+    "raw_coupling_topk": 0.9139713049158322,
+    "resid_coupling_topk": 0.44486827291252784,
+    "linear_probe": {
+      "ci": {
+        "val_mse": 1.4532419423465583,
+        "gain_vs_ci_%": 0.0
+      },
+      "graph": {
+        "val_mse": 1.3581010724119131,
+        "gain_vs_ci_%": 6.546801820281947
+      },
+      "factor": {
+        "val_mse": 0.8943394635450714,
+        "gain_vs_ci_%": 38.459011023245296
+      },
+      "factor+resid_graph": {
+        "val_mse": 0.8967289884554575,
+        "gain_vs_ci_%": 38.29458383182198
+      }
+    }
+  },
+  "models": {
+    "attn": {
+      "val_mse": 0.6926516774249414,
+      "test_mse": 0.6731472079333567,
+      "test_mae": 0.592020561500411,
+      "epochs_run": 8,
+      "seconds": 132.9890239238739,
+      "params": 79392
+    }
+  },
+  "config": {
+    "seed": 0,
+    "lr": 0.0003,
+    "train_stride": 3,
+    "eval_stride": 2,
+    "D": 64,
+    "layers": 2,
+    "k": 10,
+    "r_factor_tokens": 4
+  },
+  "seconds": 150.4948127269745
+}
