@@ -80,6 +80,7 @@ Fixed-k frontier = piecewise-linear interpolation between fixed stopping points 
 
 | dataset | MSE k=1 | k=2 | k=3 | k=4 | top-20% share of refinement gain | samples hurt by refinement | oracle per-sample stop | halting vs frontier (max, at FLOPs) | FLOPs to reach best fixed +1%: halting / fixed |
 |---|---|---|---|---|---|---|---|---|---|
+| ECL | 0.5029 | 0.2577 | 0.1862 | 0.1777 | 39% | 3% | 0.1720 | +10.0% @ 0.49 | 1.00 / 1.00 |
 | ETTh1 | 0.5472 | 0.4431 | 0.4118 | 0.4118 | 84% | 25% | 0.3826 | +8.8% @ 0.43 | 0.67 / 0.72 |
 | ETTm1 | 0.3193 | 0.3092 | 0.3077 | 0.3083 | 86% | 41% | 0.2967 | +1.3% @ 0.41 | 0.48 / 0.53 |
 | PEMS08 | 0.3703 | 0.3551 | 0.3541 | 0.3512 | 71% | 36% | 0.3182 | +3.1% @ 0.8 | 0.49 / 0.72 |
