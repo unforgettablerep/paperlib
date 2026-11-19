@@ -1,0 +1,78 @@
+{
+  "dataset": "AirQuality",
+  "L": 96,
+  "H": 12,
+  "K": 3,
+  "C": 12,
+  "n_train_windows": 6442,
+  "n_test_windows": 1860,
+  "ridge_test": {
+    "ci": {
+      "mse": 0.42510073850473984,
+      "mae": 0.4574187799838799,
+      "lambda": 0.001,
+      "gain_vs_ci_%": 0.0
+    },
+    "static": {
+      "mse": 0.42960677047353857,
+      "mae": 0.4590700197060783,
+      "lambda": 0.01,
+      "gain_vs_ci_%": -1.0599915645050066
+    },
+    "staticwin": {
+      "mse": 0.42838848124585266,
+      "mae": 0.45847032954373507,
+      "lambda": 0.01,
+      "gain_vs_ci_%": -0.7734032061852468
+    },
+    "phase": {
+      "mse": 0.4279957061503007,
+      "mae": 0.4583443810248166,
+      "lambda": 0.01,
+      "gain_vs_ci_%": -0.68100743737677
+    },
+    "back": {
+      "mse": 0.4272925782416471,
+      "mae": 0.4578337737267757,
+      "lambda": 0.01,
+      "gain_vs_ci_%": -0.515604782202195
+    },
+    "back_recent": {
+      "mse": 0.42790212653959897,
+      "mae": 0.45878904214454763,
+      "lambda": 0.01,
+      "gain_vs_ci_%": -0.658993923349276
+    },
+    "fut": {
+      "mse": 0.4287401469422708,
+      "mae": 0.4590748785852027,
+      "lambda": 0.01,
+      "gain_vs_ci_%": -0.8561284674151154
+    }
+  },
+  "relation_stats": {
+    "back": {
+      "mad_to_Rfut_mean": 0.2659269416354574,
+      "topk_jaccard_with_Rfut_mean": 0.403494623655914
+    },
+    "back_recent": {
+      "mad_to_Rfut_mean": 0.332701153340766,
+      "topk_jaccard_with_Rfut_mean": 0.38668906810035847
+    },
+    "static": {
+      "mad_to_Rfut_mean": 0.321260400270893,
+      "topk_jaccard_with_Rfut_mean": 0.38391577060931903
+    },
+    "staticwin": {
+      "mad_to_Rfut_mean": 0.27429132156285563,
+      "topk_jaccard_with_Rfut_mean": 0.43643369175627245
+    },
+    "phase": {
+      "mad_to_Rfut_mean": 0.24189925863391612,
+      "topk_jaccard_with_Rfut_mean": 0.4435483870967742
+    },
+    "phase_beats_back_frac": 0.5956989247311828,
+    "phase_beats_staticwin_frac": 0.6881720430107527
+  },
+  "seconds": 7.32061243057251
+}

@@ -1,0 +1,50 @@
+{
+  "dataset": "Weather",
+  "L": 96,
+  "H": 96,
+  "C": 21,
+  "prior_edges": 32,
+  "prior_mean_degree": 3.0476190476190474,
+  "regimes": {
+    "full": {
+      "n_train_windows": 36696,
+      "prior_vs_data_auroc(top-quartile |corr| pairs)": 0.64920081720947,
+      "prior_edge_precision_in_data_topdeg": 0.6875,
+      "test_mse": {
+        "ci": 0.25363942722190574,
+        "prior_graph": 0.25327838924658147,
+        "data_graph": 0.2537205768955717,
+        "prior_or_data": 0.2534594879302553,
+        "random_graph_mean": 0.25265975735394597,
+        "random_graph_std": 0.0009566325477530416
+      },
+      "gain_vs_ci_%": {
+        "ci": 0.0,
+        "prior_graph": 0.14234300214233137,
+        "data_graph": -0.031994108548022454,
+        "prior_or_data": 0.07094294984865164,
+        "random_graph_mean": 0.38624510340920926
+      }
+    },
+    "fewshot_5pct": {
+      "n_train_windows": 1653,
+      "prior_vs_data_auroc(top-quartile |corr| pairs)": 0.6356808075952409,
+      "prior_edge_precision_in_data_topdeg": 0.578125,
+      "test_mse": {
+        "ci": 0.2629733269274681,
+        "prior_graph": 0.26467614154140673,
+        "data_graph": 0.2668545882397514,
+        "prior_or_data": 0.2650490617878348,
+        "random_graph_mean": 0.269100565389559,
+        "random_graph_std": 0.005685944751437037
+      },
+      "gain_vs_ci_%": {
+        "ci": 0.0,
+        "prior_graph": -0.6475236990131248,
+        "data_graph": -1.4759144425905173,
+        "prior_or_data": -0.7893328515934379,
+        "random_graph_mean": -2.329984768295867
+      }
+    }
+  }
+}

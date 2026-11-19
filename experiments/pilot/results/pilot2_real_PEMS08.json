@@ -1,0 +1,64 @@
+{
+  "dataset": "PEMS08",
+  "L": 96,
+  "H": 96,
+  "diagnostics": {
+    "C": 170,
+    "pc1_share": 0.8017653747379203,
+    "pc3_share": 0.8708363538922145,
+    "raw_coupling_topk": 0.9139713049158322,
+    "resid_coupling_topk": 0.4448682729125278,
+    "linear_probe": {
+      "ci": {
+        "val_mse": 1.4532419423465583,
+        "gain_vs_ci_%": 0.0
+      },
+      "graph": {
+        "val_mse": 1.3581010724119147,
+        "gain_vs_ci_%": 6.54680182028184
+      },
+      "factor": {
+        "val_mse": 0.8943394635450695,
+        "gain_vs_ci_%": 38.459011023245424
+      },
+      "factor+resid_graph": {
+        "val_mse": 0.8967289884554569,
+        "gain_vs_ci_%": 38.294583831822024
+      }
+    }
+  },
+  "models": {
+    "ci": {
+      "val_mse": 0.840089226820688,
+      "test_mse": 0.7967329259001501,
+      "test_mae": 0.6201836107278517,
+      "epochs_run": 8,
+      "seconds": 34.89036846160889,
+      "params": 46112
+    },
+    "attn": {
+      "val_mse": 0.5968344340458653,
+      "test_mse": 0.5720800433650247,
+      "test_mae": 0.5324534308326953,
+      "epochs_run": 8,
+      "seconds": 123.71324324607849,
+      "params": 79392
+    },
+    "dense": {
+      "val_mse": 0.42095975825637905,
+      "test_mse": 0.42026681872696037,
+      "test_mae": 0.44874740721433315,
+      "epochs_run": 8,
+      "seconds": 149.1373827457428,
+      "params": 112232
+    }
+  },
+  "config": {
+    "train_stride": 3,
+    "eval_stride": 2,
+    "D": 64,
+    "layers": 2,
+    "k": 10,
+    "r_factor_tokens": 4
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "dataset": "ETTm1",
+  "L": 96,
+  "H": 24,
+  "K": 3,
+  "C": 7,
+  "n_train_windows": 17221,
+  "n_test_windows": 5749,
+  "ridge_test": {
+    "ci": {
+      "mse": 0.27162629483856193,
+      "mae": 0.3230177280457624,
+      "lambda": 0.0001,
+      "gain_vs_ci_%": 0.0
+    },
+    "static": {
+      "mse": 0.27053980097138286,
+      "mae": 0.3225718500641977,
+      "lambda": 0.01,
+      "gain_vs_ci_%": 0.3999958353902438
+    },
+    "staticwin": {
+      "mse": 0.2737364947908468,
+      "mae": 0.32292075693465033,
+      "lambda": 0.001,
+      "gain_vs_ci_%": -0.7768761686121055
+    },
+    "phase": {
+      "mse": 0.2683484049815883,
+      "mae": 0.32015604507226836,
+      "lambda": 0.01,
+      "gain_vs_ci_%": 1.20676455824051
+    },
+    "back": {
+      "mse": 0.27310304444183126,
+      "mae": 0.324455603349548,
+      "lambda": 0.01,
+      "gain_vs_ci_%": -0.5436696046481849
+    },
+    "back_recent": {
+      "mse": 0.26708213924121765,
+      "mae": 0.3209627646470883,
+      "lambda": 0.01,
+      "gain_vs_ci_%": 1.672943924683377
+    },
+    "fut": {
+      "mse": 0.2687826594201709,
+      "mae": 0.31948806141446723,
+      "lambda": 0.1,
+      "gain_vs_ci_%": 1.0468925403857303
+    }
+  },
+  "relation_stats": {
+    "back": {
+      "mad_to_Rfut_mean": 0.4243115920480689,
+      "topk_jaccard_with_Rfut_mean": 0.4814203712446885
+    },
+    "back_recent": {
+      "mad_to_Rfut_mean": 0.49226328961996524,
+      "topk_jaccard_with_Rfut_mean": 0.5061252888701141
+    },
+    "static": {
+      "mad_to_Rfut_mean": 0.4344833845976213,
+      "topk_jaccard_with_Rfut_mean": 0.41901945679994035
+    },
+    "staticwin": {
+      "mad_to_Rfut_mean": 0.3831199595163532,
+      "topk_jaccard_with_Rfut_mean": 0.5697462912804712
+    },
+    "phase": {
+      "mad_to_Rfut_mean": 0.33682908463763905,
+      "topk_jaccard_with_Rfut_mean": 0.5468354744924583
+    },
+    "phase_beats_back_frac": 0.7338667594364238,
+    "phase_beats_staticwin_frac": 0.7416942076882936
+  },
+  "seconds": 17.43699598312378
+}

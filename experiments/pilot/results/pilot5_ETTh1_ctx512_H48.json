@@ -1,0 +1,51 @@
+{
+  "dataset": "ETTh1",
+  "ctx": 512,
+  "H": 48,
+  "C": 7,
+  "n_train_windows": 60,
+  "n_test_windows": 60,
+  "seconds_uni": 87.27461504936218,
+  "seconds_multi": 64.5435938835144,
+  "zero_shot": {
+    "uni": {
+      "mse": 0.3906917870044708,
+      "mae": 0.3641081154346466
+    },
+    "multi": {
+      "mse": 0.35447362065315247,
+      "mae": 0.35213083028793335
+    }
+  },
+  "adapters": {
+    "uni+ci_adapter": {
+      "mse": 0.38352951695366494,
+      "mae": 0.39646818098567627,
+      "lambda": 1.0
+    },
+    "uni+graph_adapter": {
+      "mse": 0.4007782380765063,
+      "mae": 0.40994342694871294,
+      "lambda": 1.0
+    },
+    "multi+ci_adapter": {
+      "mse": 0.3704395869151197,
+      "mae": 0.38959578477984386,
+      "lambda": 1.0
+    },
+    "multi+graph_adapter": {
+      "mse": 0.3874063903947179,
+      "mae": 0.4036850985845132,
+      "lambda": 1.0
+    }
+  },
+  "gain_vs_uni_zero_shot_%": {
+    "uni_zero_shot": 0.0,
+    "multi_zero_shot": 9.2702656047653,
+    "uni+ci_adapter": 1.8332276973930668,
+    "uni+graph_adapter": -2.5816900706745756,
+    "multi+ci_adapter": 5.183676945100303,
+    "multi+graph_adapter": 0.8409177564091755
+  },
+  "seconds": 152.01547956466675
+}
