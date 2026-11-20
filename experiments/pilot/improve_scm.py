@@ -70,6 +70,10 @@ class Net(nn.Module):
         if self.time:
             self.tod = nn.Embedding(24, D)
             self.dow = nn.Embedding(7, D)
+            # zero-init: the model starts exactly as its no-calendar counterpart and only learns to use the
+            # calendar when it helps (default N(0,1) init hurt ECL badly in a first run)
+            nn.init.zeros_(self.tod.weight)
+            nn.init.zeros_(self.dow.weight)
         self.mix = nn.ModuleList([Mixer(C, kind, 0.3 if variant == "scm+drop" else 0.0) if kind else None
                                   for _ in range(2)])
         self.ffn = nn.ModuleList([nn.Sequential(nn.Linear(D, 2 * D), nn.GELU(), nn.Dropout(0.1), nn.Linear(2 * D, D))
