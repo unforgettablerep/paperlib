@@ -94,7 +94,7 @@ def main():
           and not r.get("config", {}).get("tag")]
     p2_rob = [r for r in p2_all if r not in p2]
     if p2:
-        variants = ["ci", "attn", "dense", "factor", "sparse", "factor_sparse"]
+        variants = ["ci", "attn", "dense", "factor", "sparse", "factor_sparse", "static_lrs"]
         out += ["## Pilot 2B/2C — real data: diagnostics and channel-mixing variants", "",
                 "Same backbone (2 layers, D=64), same budget; only the channel-mixing block differs. L=96, H=96. "
                 "Cells: test MSE (gain vs CI %).", "",
@@ -139,13 +139,13 @@ def main():
 
     if p2_rob:
         out += ["### Pilot 2 robustness re-runs (other seed / lower learning rate)", "",
-                "| dataset | seed | lr | tag / train stride | " + " | ".join(["ci", "attn", "dense", "factor", "sparse", "factor_sparse"]) + " |",
-                "|---|---|---|---|" + "---|" * 6]
+                "| dataset | seed | lr | tag / train stride | " + " | ".join(["ci", "attn", "dense", "factor", "sparse", "factor_sparse", "static_lrs"]) + " |",
+                "|---|---|---|---|" + "---|" * 7]
         for r in p2_rob:
             m = r["models"]
             out.append(f"| {r['dataset']} | {r['config']['seed']} | {r['config']['lr']:g} | "
                        f"{r['config'].get('tag') or '-'} / {r['config']['train_stride']} | " + " | ".join(
-                f"{m[v]['test_mse']:.4f}" if v in m else "—" for v in ["ci", "attn", "dense", "factor", "sparse", "factor_sparse"]) + " |")
+                f"{m[v]['test_mse']:.4f}" if v in m else "—" for v in ["ci", "attn", "dense", "factor", "sparse", "factor_sparse", "static_lrs"]) + " |")
         out.append("")
 
     # ---- pilot 3

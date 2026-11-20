@@ -61,42 +61,55 @@ Structure recovery AUROC against the true (undirected) parent graph, and forecas
 
 Same backbone (2 layers, D=64), same budget; only the channel-mixing block differs. L=96, H=96. Cells: test MSE (gain vs CI %).
 
-| dataset | C | PC1 share | probe: +graph | probe: +factor | ci | attn | dense | factor | sparse | factor_sparse |
-|---|---|---|---|---|---|---|---|---|---|---|
-| AirQuality | 12 | 0.58 | -0.3% | +2.0% | 0.7840 (+0.0%) | 0.8324 (-6.2%) | 0.8267 (-5.5%) | 0.8390 (-7.0%) | 0.8325 (-6.2%) | 0.8270 (-5.5%) |
-| ETTh1 | 7 | 0.42 | +0.2% | +0.2% | 0.3765 (+0.0%) | 0.3844 (-2.1%) | 0.3885 (-3.2%) | 0.3841 (-2.0%) | 0.3844 (-2.1%) | 0.3887 (-3.2%) |
-| ETTh2 | 7 | 0.44 | -2.3% | -15.5% | 0.2976 (+0.0%) | 0.3087 (-3.7%) | 0.3336 (-12.1%) | 0.3044 (-2.3%) | 0.3087 (-3.7%) | 0.3064 (-3.0%) |
-| ETTm1 | 7 | 0.42 | -0.6% | +2.1% | 0.3227 (+0.0%) | 0.3354 (-3.9%) | 0.3202 (+0.8%) | 0.3291 (-2.0%) | 0.3354 (-3.9%) | 0.3384 (-4.9%) |
-| ETTm2 | 7 | 0.44 | -0.3% | +0.1% | 0.1785 (+0.0%) | 0.1867 (-4.6%) | 0.1790 (-0.3%) | 0.1813 (-1.6%) | 0.1867 (-4.6%) | 0.1849 (-3.6%) |
-| Exchange | 8 | 0.56 | +0.1% | +0.8% | 0.0913 (+0.0%) | 0.0917 (-0.5%) | 0.0944 (-3.5%) | 0.0954 (-4.5%) | 0.0917 (-0.5%) | 0.0963 (-5.6%) |
-| PEMS04 | 307 | 0.78 | +13.4% | +43.1% | 0.8588 (+0.0%) | 0.5723 (+33.4%) | 0.3752 (+56.3%) | — | — | 0.5864 (+31.7%) |
-| PEMS08 | 170 | 0.80 | +6.5% | +38.5% | 0.7967 (+0.0%) | 0.5721 (+28.2%) | 0.4203 (+47.3%) | 0.5737 (+28.0%) | 0.5802 (+27.2%) | 0.5677 (+28.7%) |
-| Solar | 137 | 0.91 | +9.5% | -3.6% | 0.2802 (+0.0%) | 0.2650 (+5.4%) | 0.2609 (+6.9%) | — | — | 0.2595 (+7.4%) |
-| Weather | 21 | 0.43 | +1.5% | -0.6% | 0.2377 (+0.0%) | 0.2311 (+2.8%) | 0.2062 (+13.2%) | 0.2349 (+1.2%) | 0.2289 (+3.7%) | 0.2257 (+5.0%) |
+| dataset | C | PC1 share | probe: +graph | probe: +factor | ci | attn | dense | factor | sparse | factor_sparse | static_lrs |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| AirQuality | 12 | 0.58 | -0.3% | +2.0% | 0.7840 (+0.0%) | 0.8324 (-6.2%) | 0.8267 (-5.5%) | 0.8390 (-7.0%) | 0.8325 (-6.2%) | 0.8270 (-5.5%) | 0.8232 (-5.0%) |
+| ECL | 321 | 0.55 | -3.1% | -85.8% | 0.2639 (+0.0%) | 0.3046 (-15.4%) | 0.3127 (-18.5%) | — | — | 0.2708 (-2.6%) | 0.2921 (-10.7%) |
+| ETTh1 | 7 | 0.42 | +0.2% | +0.2% | 0.3765 (+0.0%) | 0.3844 (-2.1%) | 0.3885 (-3.2%) | 0.3841 (-2.0%) | 0.3844 (-2.1%) | 0.3887 (-3.2%) | 0.3890 (-3.3%) |
+| ETTh2 | 7 | 0.44 | -2.3% | -15.5% | 0.2976 (+0.0%) | 0.3087 (-3.7%) | 0.3336 (-12.1%) | 0.3044 (-2.3%) | 0.3087 (-3.7%) | 0.3064 (-3.0%) | 0.3316 (-11.4%) |
+| ETTm1 | 7 | 0.42 | -0.6% | +2.1% | 0.3227 (+0.0%) | 0.3354 (-3.9%) | 0.3202 (+0.8%) | 0.3291 (-2.0%) | 0.3354 (-3.9%) | 0.3384 (-4.9%) | 0.3173 (+1.7%) |
+| ETTm2 | 7 | 0.44 | -0.3% | +0.1% | 0.1785 (+0.0%) | 0.1867 (-4.6%) | 0.1790 (-0.3%) | 0.1813 (-1.6%) | 0.1867 (-4.6%) | 0.1849 (-3.6%) | 0.1786 (-0.1%) |
+| Exchange | 8 | 0.56 | +0.1% | +0.8% | 0.0913 (+0.0%) | 0.0917 (-0.5%) | 0.0944 (-3.5%) | 0.0954 (-4.5%) | 0.0917 (-0.5%) | 0.0963 (-5.6%) | 0.0946 (-3.7%) |
+| PEMS04 | 307 | 0.78 | +13.4% | +43.1% | 0.8588 (+0.0%) | 0.5723 (+33.4%) | 0.3752 (+56.3%) | — | — | 0.5864 (+31.7%) | 0.4423 (+48.5%) |
+| PEMS08 | 170 | 0.80 | +6.5% | +38.5% | 0.7967 (+0.0%) | 0.5721 (+28.2%) | 0.4203 (+47.3%) | 0.5737 (+28.0%) | 0.5802 (+27.2%) | 0.5677 (+28.7%) | 0.4217 (+47.1%) |
+| Solar | 137 | 0.91 | +9.5% | -3.6% | 0.2802 (+0.0%) | 0.2650 (+5.4%) | 0.2609 (+6.9%) | — | — | 0.2595 (+7.4%) | 0.2686 (+4.1%) |
+| Traffic | 862 | 0.59 | -49.8% | -417.7% | 1.2172 (+0.0%) | 1.3519 (-11.1%) | 1.4830 (-21.8%) | — | — | 1.2679 (-4.2%) | 1.3384 (-10.0%) |
+| Weather | 21 | 0.43 | +1.5% | -0.6% | 0.2377 (+0.0%) | 0.2311 (+2.8%) | 0.2062 (+13.2%) | 0.2349 (+1.2%) | 0.2289 (+3.7%) | 0.2257 (+5.0%) | 0.2056 (+13.5%) |
 
-Spearman correlation across 10 datasets between a diagnostic (train/val only) and the best neural CD gain on test:
+Spearman correlation across 12 datasets between a diagnostic (train/val only) and the best neural CD gain on test:
 
-- PC1 share: ρ = +0.38
-- raw coupling: ρ = +0.52
-- residual coupling: ρ = -0.31
-- linear probe +graph gain: ρ = +0.77
-- linear probe +factor gain: ρ = +0.39
-- C (number of variables): ρ = +0.75
+- PC1 share: ρ = +0.21
+- raw coupling: ρ = +0.28
+- residual coupling: ρ = -0.16
+- linear probe +graph gain: ρ = +0.82
+- linear probe +factor gain: ρ = +0.55
+- C (number of variables): ρ = +0.10
 
-Best CD variant count: attn 0, dense 6, factor 2, sparse 1, factor_sparse 1
+Best CD variant count: attn 0, dense 2, factor 2, sparse 1, factor_sparse 3, static_lrs 4
 
 ### Pilot 2 robustness re-runs (other seed / lower learning rate)
 
-| dataset | seed | lr | ci | attn | dense | factor | sparse | factor_sparse |
-|---|---|---|---|---|---|---|---|---|
-| PEMS08 | 0 | 0.0003 | — | 0.6731 | — | — | — | — |
-| PEMS08 | 1 | 0.001 | 0.8053 | 0.5615 | 0.4277 | — | — | — |
-| Weather | 0 | 0.0003 | — | 0.2399 | 0.2092 | — | — | — |
-| Weather | 1 | 0.001 | 0.2394 | 0.2317 | 0.2066 | — | — | 0.2246 |
+| dataset | seed | lr | tag / train stride | ci | attn | dense | factor | sparse | factor_sparse | static_lrs |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ECL | 0 | 0.001 | stride3 / 3 | 0.1976 | 0.1934 | 0.1792 | — | — | 0.1912 | 0.1692 |
+| PEMS08 | 0 | 0.0003 | - / 3 | — | 0.6731 | — | — | — | — | — |
+| PEMS08 | 1 | 0.001 | - / 3 | 0.8053 | 0.5615 | 0.4277 | — | — | — | — |
+| Weather | 0 | 0.0003 | - / 2 | — | 0.2399 | 0.2092 | — | — | — | — |
+| Weather | 1 | 0.001 | - / 2 | 0.2394 | 0.2317 | 0.2066 | — | — | 0.2246 | — |
 
 ## Pilot 3 — Mamba channel-scan order
 
 Same model and seed, only the order differs (`seedN` rows = original order with another seed, i.e. the noise floor). LA = normalised linear-arrangement cost of the order on the top-k |corr| graph.
+
+**ECL** (C=321, H=96)
+
+| run | order | LA cost | test MSE |
+|---|---|---|---|
+| bi16_anti | anti | 0.458 | 0.2721 |
+| bi16_spectral | spectral | 0.121 | 0.2737 |
+| bi16_original | original | 0.15 | 0.2745 |
+
+bi16 orders: MSE range 0.2721–0.2745 (spread 0.9%), Spearman(LA, MSE) = -0.50; seed spread (original order) 0.0%
 
 **PEMS08** (C=170, H=48)
 
@@ -106,6 +119,8 @@ Same model and seed, only the order differs (`seedN` rows = original order with 
 | bi16_original | original | 0.306 | 0.3899 |
 | bi16_spectral_dist | spectral_dist | 0.308 | 0.3920 |
 | bi16_original_seed1 | original | 0.306 | 0.3966 |
+| uni16_anti | anti | 0.463 | 0.4031 |
+| uni16_spectral_dist | spectral_dist | 0.308 | 0.4097 |
 
 bi16 orders: MSE range 0.3877–0.3920 (spread 1.1%), Spearman(LA, MSE) = -0.50; seed spread (original order) 1.7%
 
