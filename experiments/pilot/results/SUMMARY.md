@@ -173,15 +173,15 @@ Edge weights always come from train correlations; only the edge set differs. Gai
 
 ## Improvement — Static-Calendar Mixing (SCM) vs attention-based channel mixing
 
-Same backbone and budget (L=96, H=96, D=64, 2 layers, ≤8 epochs). Test MSE; the last columns give the relative MSE reduction of the better SCM variant (scm or scm+drop, chosen on validation) over attn+time (iTransformer-like with time features) and over CI+time.
+Same backbone and budget (L=96, H=96, D=64, 2 layers, ≤8 epochs, seed 0). Test MSE. `scm+drop` = default SCM (static W + calendar low-rank modulation + calendar embedding + DropConnect); `scmh+drop` = SCM + parallel attention branch; `scmlrs+drop` = SCM with low-rank+sparse W. Gains are relative MSE reductions vs attn+time (iTransformer-like with time features).
 
-| dataset | C | ci | ci+time | attn | attn+time | dense+time | scm | scm+drop | SCM vs attn+time | SCM vs ci+time |
-|---|---|---|---|---|---|---|---|---|---|---|
-| ECL | 321 | 0.1976 | 0.1937 | 0.1924 | 0.1898 | 0.1826 | 0.1816 | 0.1692 | +10.9% (scm+drop) | +12.6% |
-| ETTh1 | 7 | 0.3764 | 0.3789 | 0.3849 | 0.3896 | 0.3909 | 0.3903 | 0.3896 | +0.0% (scm+drop) | -2.8% |
-| ETTm1 | 7 | 0.3234 | 0.3202 | 0.3407 | 0.3262 | 0.3154 | 0.3207 | 0.3141 | +3.7% (scm+drop) | +1.9% |
-| PEMS04 | 307 | 0.7622 | 0.4844 | 0.4803 | 0.4476 | 0.2811 | 0.2410 | 0.2425 | +46.1% (scm) | +50.2% |
-| PEMS08 | 170 | 0.7961 | 0.4770 | 0.5507 | 0.4475 | 0.3781 | 0.3495 | 0.3428 | +23.4% (scm+drop) | +28.1% |
-| Solar | 137 | 0.2737 | 0.2376 | 0.2495 | 0.2311 | 0.2356 | 0.2366 | 0.2359 | -2.1% (scm+drop) | +0.7% |
-| Traffic | 862 | — | 0.8948 | — | 1.1217 | 1.1843 | 1.2909 | 1.2243 | -9.2% (scm+drop) | -36.8% |
-| Weather | 21 | 0.2373 | 0.2283 | 0.2322 | 0.2253 | 0.2012 | 0.2080 | 0.2057 | +8.7% (scm+drop) | +9.9% |
+| dataset | C | ci | ci+time | attn | attn+time | dense+time | scm | scm+drop | scmh+drop | scmlrs+drop | scm+drop vs attn+time | best SCM-family (val-selected) vs attn+time |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| ECL | 321 | 0.1976 | 0.1937 | 0.1924 | 0.1898 | 0.1826 | 0.1816 | 0.1692 | — | — | +10.9% | +10.9% (scm+drop) |
+| ETTh1 | 7 | 0.3764 | 0.3789 | 0.3849 | 0.3896 | 0.3909 | 0.3903 | 0.3896 | — | — | +0.0% | +0.0% (scm+drop) |
+| ETTm1 | 7 | 0.3234 | 0.3202 | 0.3407 | 0.3262 | 0.3154 | 0.3207 | 0.3141 | — | — | +3.7% | +3.7% (scm+drop) |
+| PEMS04 | 307 | 0.7622 | 0.4844 | 0.4803 | 0.4476 | 0.2811 | 0.2410 | 0.2425 | — | — | +45.8% | +46.1% (scm) |
+| PEMS08 | 170 | 0.7961 | 0.4770 | 0.5507 | 0.4475 | 0.3781 | 0.3495 | 0.3428 | — | — | +23.4% | +23.4% (scm+drop) |
+| Solar | 137 | 0.2737 | 0.2376 | 0.2495 | 0.2311 | 0.2356 | 0.2366 | 0.2359 | — | — | -2.1% | -2.1% (scm+drop) |
+| Traffic | 862 | — | 0.8948 | — | 1.1217 | 1.1843 | 1.2909 | 1.2243 | — | — | -9.2% | -9.2% (scm+drop) |
+| Weather | 21 | 0.2373 | 0.2283 | 0.2322 | 0.2253 | 0.2012 | 0.2080 | 0.2057 | — | — | +8.7% | +8.7% (scm+drop) |
