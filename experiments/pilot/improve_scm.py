@@ -30,42 +30,61 @@ from common import Dataset, save_json
 torch.set_num_threads(int(os.environ.get("OMP_NUM_THREADS", "1")))
 L, D, NG, RANK = 96, 64, 12, 8
 SEED = int(os.environ.get("PILOT_SEED", "0"))
-ALL = ["ci", "ci+time", "attn", "attn+time", "dense+time", "scm", "scm+drop"]
+ALL = ["ci", "ci+time", "attn", "attn+time", "dense+time", "scm", "scm+drop", "scmh+drop", "scmlrs+drop"]
 
 
 class Mixer(nn.Module):
-    def __init__(self, C, kind, drop_w=0.0):
+    def __init__(self, C, kind, drop_w=0.0, hybrid=False, lrs_allow=None, lrs_rank=16):
         super().__init__()
         self.kind = kind
         if kind == "attn":
             self.att = nn.MultiheadAttention(D, 4, batch_first=True)
             return
-        self.W = nn.Parameter(torch.zeros(C, C))
+        self.C = C
+        self.lrs = lrs_allow is not None
+        if self.lrs:  # static W = U V^T + sparse S on a fixed top-k pattern (parameter-efficient for large C)
+            self.U = nn.Parameter(torch.zeros(C, lrs_rank))
+            self.Vl = nn.Parameter(torch.randn(C, lrs_rank) / C ** 0.5)
+            idx = lrs_allow.nonzero(as_tuple=False)
+            self.register_buffer("rows", idx[:, 0], persistent=False)
+            self.register_buffer("cols", idx[:, 1], persistent=False)
+            self.s = nn.Parameter(torch.zeros(idx.shape[0]))
+        else:
+            self.W = nn.Parameter(torch.zeros(C, C))
         self.v = nn.Linear(D, D)
         self.drop_w = drop_w
         if kind == "mod":
             self.A = nn.Parameter(torch.zeros(NG, C, RANK))
             self.B = nn.Parameter(torch.randn(NG, C, RANK) * 0.02)
+        self.att = nn.MultiheadAttention(D, 4, batch_first=True) if hybrid else None
 
     def forward(self, h, g):
         if self.kind == "attn":
             return self.att(h, h, h, need_weights=False)[0]
         v = self.v(h)
-        W = self.W
+        if self.lrs:
+            W = self.U @ self.Vl.T + torch.zeros(self.C, self.C, device=h.device).index_put((self.rows, self.cols), self.s)
+        else:
+            W = self.W
         if self.training and self.drop_w > 0:
             W = F.dropout(W, p=self.drop_w)  # DropConnect on the static mixing matrix
         out = torch.einsum("ij,bjd->bid", W, v)
         if self.kind == "mod":
             out = out + torch.einsum("bir,bjr,bjd->bid", self.A[g], self.B[g], v)
+        if self.att is not None:  # hybrid: add a dynamic (attention) branch on top of the static mixing
+            out = out + self.att(h, h, h, need_weights=False)[0]
         return out
 
 
 class Net(nn.Module):
-    def __init__(self, C, H, variant):
+    def __init__(self, C, H, variant, lrs_allow=None):
         super().__init__()
         self.time = variant != "ci" and variant != "attn"
         kind = None if variant.startswith("ci") else "attn" if variant.startswith("attn") else \
             "dense" if variant == "dense+time" else "mod"
+        drop_w = 0.3 if variant.endswith("+drop") else 0.0
+        hybrid = variant.startswith("scmh")
+        lrs = lrs_allow if variant.startswith("scmlrs") else None
         self.emb = nn.Linear(L, D)
         if self.time:
             self.tod = nn.Embedding(24, D)
@@ -74,8 +93,7 @@ class Net(nn.Module):
             # calendar when it helps (default N(0,1) init hurt ECL badly in a first run)
             nn.init.zeros_(self.tod.weight)
             nn.init.zeros_(self.dow.weight)
-        self.mix = nn.ModuleList([Mixer(C, kind, 0.3 if variant == "scm+drop" else 0.0) if kind else None
-                                  for _ in range(2)])
+        self.mix = nn.ModuleList([Mixer(C, kind, drop_w, hybrid, lrs) if kind else None for _ in range(2)])
         self.ffn = nn.ModuleList([nn.Sequential(nn.Linear(D, 2 * D), nn.GELU(), nn.Dropout(0.1), nn.Linear(2 * D, D))
                                   for _ in range(2)])
         self.n1 = nn.ModuleList([nn.LayerNorm(D) for _ in range(2)])
@@ -131,12 +149,25 @@ def main():
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results", fname)
     res = {"dataset": name, "C": ds.C, "L": L, "H": H, "seed": SEED, "train_stride": s_tr, "eval_stride": s_ev,
            "runs": json.load(open(path))["runs"] if os.path.exists(path) else {}}
+    lrs_allow = None
+    if any(v.startswith("scmlrs") for v in variants):  # sparse pattern: top-k of factor-removed train corr
+        Xtr = ds.X[: ds.splits[0]].astype(np.float64)
+        Z = Xtr - Xtr.mean(0)
+        Vt = np.linalg.svd(Z, full_matrices=False)[2][: min(3, ds.C - 2)]
+        E = Z - (Z @ Vt.T) @ Vt
+        R = np.abs(np.nan_to_num(np.corrcoef(E.T)))
+        np.fill_diagonal(R, -1)
+        k = min(10, ds.C - 1)
+        idx = np.argpartition(-R, k - 1, axis=1)[:, :k]
+        allow = np.zeros((ds.C, ds.C), bool)
+        allow[np.repeat(np.arange(ds.C), k), idx.ravel()] = True
+        lrs_allow = torch.as_tensor(allow)
     for v in variants:
         if v in res["runs"]:
             continue
         torch.manual_seed(SEED)
         rng = np.random.default_rng(SEED)
-        model = Net(ds.C, H, v)
+        model = Net(ds.C, H, v, lrs_allow)
         opt = torch.optim.Adam(model.parameters(), lr=1e-3)
         best, state, bad, t0 = 1e9, None, 0, time.time()
         for ep in range(8):
