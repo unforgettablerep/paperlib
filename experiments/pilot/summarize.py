@@ -234,6 +234,48 @@ def main():
                            f"{g['random_graph_mean']:+.2f} |")
         out.append("")
 
+    # ---- improvement experiment (static-calendar mixing, SCM)
+    imp = [r for r in load("improve_*.json") if r.get("seed", 0) == 0]
+    if imp:
+        vs = ["ci", "ci+time", "attn", "attn+time", "dense+time", "scm", "scm+drop"]
+        out += ["## Improvement — Static-Calendar Mixing (SCM) vs attention-based channel mixing", "",
+                "Same backbone and budget (L=96, H=96, D=64, 2 layers, ≤8 epochs). Test MSE; the last columns give the "
+                "relative MSE reduction of the better SCM variant (scm or scm+drop, chosen on validation) over "
+                "attn+time (iTransformer-like with time features) and over CI+time.", "",
+                "| dataset | C | " + " | ".join(vs) + " | SCM vs attn+time | SCM vs ci+time |",
+                "|---|---|" + "---|" * (len(vs) + 2)]
+        for r in imp:
+            m = r["runs"]
+            cells = [f"{m[v]['test_mse']:.4f}" if v in m else "—" for v in vs]
+            cand = [v for v in ["scm", "scm+drop"] if v in m]
+            if cand:
+                pick = min(cand, key=lambda v: m[v]["val_mse"])
+                g1 = 100 * (m["attn+time"]["test_mse"] - m[pick]["test_mse"]) / m["attn+time"]["test_mse"] \
+                    if "attn+time" in m else float("nan")
+                g2 = 100 * (m["ci+time"]["test_mse"] - m[pick]["test_mse"]) / m["ci+time"]["test_mse"] \
+                    if "ci+time" in m else float("nan")
+                tail = f" {g1:+.1f}% ({pick}) | {g2:+.1f}% |"
+            else:
+                tail = " — | — |"
+            out.append(f"| {r['dataset']} | {r['C']} | " + " | ".join(cells) + " |" + tail)
+        out.append("")
+        seeds = [r for r in load("improve_*_seed*.json")]
+        if seeds:
+            out += ["### SCM seed check (mean ± std over available seeds, test MSE)", "",
+                    "| dataset | attn+time | dense+time | scm | seeds |", "|---|---|---|---|---|"]
+            by = {}
+            for r in [x for x in load("improve_*.json")]:
+                by.setdefault(r["dataset"], []).append(r)
+            for dname, rs in sorted(by.items()):
+                if len(rs) < 2:
+                    continue
+                row = []
+                for v in ["attn+time", "dense+time", "scm"]:
+                    vals = [x["runs"][v]["test_mse"] for x in rs if v in x["runs"]]
+                    row.append(f"{np.mean(vals):.4f} ± {np.std(vals):.4f}" if vals else "—")
+                out.append(f"| {dname} | " + " | ".join(row) + f" | {len(rs)} |")
+            out.append("")
+
     path = os.path.join(RES, "SUMMARY.md")
     open(path, "w").write("\n".join(out))
     print("\n".join(out))
