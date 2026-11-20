@@ -263,9 +263,9 @@ def main():
             by.setdefault(r["dataset"], []).append(r)
         multi = {k: v for k, v in by.items() if len(v) >= 2}
         if multi:
-            sv = ["attn+time", "dense+time", "scm+drop", "scmh+drop"]
+            sv = ["attn+time", "dense+time", "scm+drop", "scmlrs+drop"]
             out += ["### SCM seed check (mean ± std over seeds, test MSE)", "",
-                    "| dataset | seeds | " + " | ".join(sv) + " | scm+drop vs attn+time (mean) |",
+                    "| dataset | seeds | " + " | ".join(sv) + " | scmlrs+drop vs attn+time (mean) |",
                     "|---|---|" + "---|" * (len(sv) + 1)]
             for dname, rs in sorted(multi.items()):
                 row, means = [], {}
@@ -276,8 +276,8 @@ def main():
                         row.append(f"{np.mean(vals):.4f} ± {np.std(vals):.4f} (n={len(vals)})")
                     else:
                         row.append("—")
-                g = (f"{100 * (means['attn+time'] - means['scm+drop']) / means['attn+time']:+.1f}%"
-                     if "attn+time" in means and "scm+drop" in means else "—")
+                g = (f"{100 * (means['attn+time'] - means['scmlrs+drop']) / means['attn+time']:+.1f}%"
+                     if "attn+time" in means and "scmlrs+drop" in means else "—")
                 out.append(f"| {dname} | {len(rs)} | " + " | ".join(row) + f" | {g} |")
             out.append("")
 
